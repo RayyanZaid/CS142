@@ -56,7 +56,8 @@ double squareroot(double x)
     {
 
         double temp = x_n;
-        x_n = 0.5 * (x_n + (x / x_n));
+
+        x_n = x_n - (calculateFunction(x_n,x) / calculateDerivative(x_n));
 
         double change = abs(temp - x_n);
 
@@ -88,7 +89,7 @@ int main()
 {
     std::vector<double> inputs;
     std::vector<double> expected;
-    double x = 75;
+    double x = 980;
   
         inputs.push_back(x);
         expected.push_back(::sqrt(x));
