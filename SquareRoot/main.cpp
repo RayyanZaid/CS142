@@ -5,41 +5,32 @@
 
 using namespace std;
 
-unordered_map<int, double> sqrtMap = {
-    {1, 1.0},
-    {2, 1.41421},
-    {3, 1.73205},
-    {4, 2.0},
-    {5, 2.23607},
-    {6, 2.44949},
-    {7, 2.64576},
-    {8, 2.82843},
-    {9, 3.0}};
-
 double initialGuess(double x)
 {
 
-    if (x < 10)
-    {
-        int nearest = static_cast<int>(round(x));
-        return sqrtMap[nearest];
-    }
+    double doubleValue = x; // Replace with your double value
 
-    double sqrt_2 = 1.414213562;
-    double sqrt_10 = 3.16227766;
+    // Use type punning to interpret the double as a long long
+    long long longLongValue;
+    std::memcpy(&longLongValue, &doubleValue, sizeof(double));
 
-    double divideBy10 = x / 10;
+    // Extract the individual bits
+    std::bitset<64> bits(longLongValue); // Assuming a 64-bit double
 
-    double guess = sqrt_10 * sqrt_2 * (divideBy10 / 2);
+    // Print the bits
+    std::cout << "Double Value: " << doubleValue << std::endl;
+    std::cout << "Binary Representation: " << bits << std::endl;
 
-    return guess;
+    return 1;
 }
 
-double calculateDerivative(double x) {
+double calculateDerivative(double x)
+{
     return 2 * x;
 }
 
-double calculateFunction(double prevX, double xToSolveFor) {
+double calculateFunction(double prevX, double xToSolveFor)
+{
     return prevX * prevX - xToSolveFor;
 }
 
@@ -57,7 +48,7 @@ double squareroot(double x)
 
         double temp = x_n;
 
-        x_n = x_n - (calculateFunction(x_n,x) / calculateDerivative(x_n));
+        x_n = x_n - (calculateFunction(x_n, x) / calculateDerivative(x_n));
 
         double change = abs(temp - x_n);
 
@@ -89,11 +80,13 @@ int main()
 {
     std::vector<double> inputs;
     std::vector<double> expected;
-    double x = 980;
-  
+    double x;
+
+    while (std::cin >> x)
+    {
         inputs.push_back(x);
         expected.push_back(::sqrt(x));
-    
+    }
 
     std::cout << squareroots(inputs, expected);
 
