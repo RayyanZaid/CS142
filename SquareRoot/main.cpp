@@ -2,26 +2,36 @@
 #include <vector>
 #include <math.h>
 #include <unordered_map>
+#include <bitset>
+#include <cmath>
+#include <chrono>
+
 
 using namespace std;
+
 
 double initialGuess(double x)
 {
 
-    double doubleValue = x; // Replace with your double value
+    uint64_t x_bits = *reinterpret_cast<uint64_t*>(&x);
 
-    // Use type punning to interpret the double as a long long
-    long long longLongValue;
-    std::memcpy(&longLongValue, &doubleValue, sizeof(double));
+    if(x < 1) {
+        return 1;
+    }
 
-    // Extract the individual bits
-    std::bitset<64> bits(longLongValue); // Assuming a 64-bit double
 
-    // Print the bits
-    std::cout << "Double Value: " << doubleValue << std::endl;
-    std::cout << "Binary Representation: " << bits << std::endl;
+    int exponent = (x_bits >> 52) & 0x7FF;
+    exponent -= 1023; // Remove bias
+    
 
-    return 1;
+    exponent = exponent / 2;
+
+    int result = pow(2,exponent);
+
+ 
+
+    return result;
+
 }
 
 double calculateDerivative(double x)
@@ -40,10 +50,10 @@ double squareroot(double x)
 
     double x_n = guess;
 
-    bool changeIsAlot = true;
+
 
     int counter = 0;
-    while (changeIsAlot || counter < 5)
+    while (counter < 3)
     {
 
         double temp = x_n;
@@ -52,10 +62,7 @@ double squareroot(double x)
 
         double change = abs(temp - x_n);
 
-        if (change <= 10)
-        {
-            changeIsAlot = false;
-        }
+   
         counter++;
     }
 
@@ -82,13 +89,21 @@ int main()
     std::vector<double> expected;
     double x;
 
+
     while (std::cin >> x)
     {
         inputs.push_back(x);
         expected.push_back(::sqrt(x));
     }
 
-    std::cout << squareroots(inputs, expected);
+     auto start = std::chrono::high_resolution_clock::now();
+     
+    std::cout << squareroots(inputs, expected) << endl;
+
+     auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+
+    std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }
