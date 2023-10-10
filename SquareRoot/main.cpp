@@ -6,32 +6,26 @@
 #include <cmath>
 #include <chrono>
 
-
 using namespace std;
-
 
 double initialGuess(double x)
 {
 
-    uint64_t x_bits = *reinterpret_cast<uint64_t*>(&x);
+    uint64_t x_bits = *reinterpret_cast<uint64_t *>(&x);
 
-    if(x < 1) {
-        return 1;
-    }
-
+    // if (x < 1)
+    // {
+    //     return 1;
+    // }
 
     int exponent = (x_bits >> 52) & 0x7FF;
     exponent -= 1023; // Remove bias
-    
 
     exponent = exponent / 2;
 
-    int result = pow(2,exponent);
-
- 
+    double result = pow(2, exponent);
 
     return result;
-
 }
 
 double calculateDerivative(double x)
@@ -50,8 +44,6 @@ double squareroot(double x)
 
     double x_n = guess;
 
-
-
     int counter = 0;
     while (counter < 3)
     {
@@ -60,9 +52,6 @@ double squareroot(double x)
 
         x_n = x_n - (calculateFunction(x_n, x) / calculateDerivative(x_n));
 
-        double change = abs(temp - x_n);
-
-   
         counter++;
     }
 
@@ -87,8 +76,8 @@ int main()
 {
     std::vector<double> inputs;
     std::vector<double> expected;
-    double x;
 
+    double x;
 
     while (std::cin >> x)
     {
@@ -96,14 +85,14 @@ int main()
         expected.push_back(::sqrt(x));
     }
 
-     auto start = std::chrono::high_resolution_clock::now();
-     
+    //  auto start = std::chrono::high_resolution_clock::now();
+
     std::cout << squareroots(inputs, expected) << endl;
 
-     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
+    //  auto end = std::chrono::high_resolution_clock::now();
+    // std::chrono::duration<double> duration = end - start;
 
-    std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;
+    // std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }
