@@ -1,4 +1,4 @@
 *.exe
 *.vscode
 *.out
-SquareRoot/*
+SquareRoot/*.out

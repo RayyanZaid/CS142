@@ -8,34 +8,33 @@
 
 using namespace std;
 
+/*
+    This function takes the exponent part of each number and returns
+    the number that is 1/2 the exponent.
+
+    Ex. if number = 64, 64 is 2 ^ 6.
+
+    So the guess would be 2 ^ 3 (because 6/2 = 3)
+*/
+
 double initialGuess(double x)
 {
 
+    // 1) Convert the double into a 64 bit datatype
+
     uint64_t x_bits = *reinterpret_cast<uint64_t *>(&x);
 
-    // if (x < 1)
-    // {
-    //     return 1;
-    // }
+    // 2) Bit shifting and masking so that we get bits 2-11 (the exponent).
 
     int exponent = (x_bits >> 52) & 0x7FF;
     exponent -= 1023; // Remove bias
 
-    exponent = exponent / 2;
+    // 3) Divide unbiased exponent by 2 and do 2^ to get a close guess
+    exponent /= 2;
 
     double result = pow(2, exponent);
 
     return result;
-}
-
-double calculateDerivative(double x)
-{
-    return 2 * x;
-}
-
-double calculateFunction(double prevX, double xToSolveFor)
-{
-    return prevX * prevX - xToSolveFor;
 }
 
 double squareroot(double x)
@@ -45,12 +44,9 @@ double squareroot(double x)
     double x_n = guess;
 
     int counter = 0;
-    while (counter < 3)
+    while (counter < 5)
     {
-
-        double temp = x_n;
-
-        x_n = x_n - (calculateFunction(x_n, x) / calculateDerivative(x_n));
+        x_n = x_n - (((x_n * x_n) - x) / (2 * x_n));
 
         counter++;
     }

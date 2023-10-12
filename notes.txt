@@ -1,0 +1,4 @@
+square root bit manipulation (first programming assignment)
+
+ill-conditioned matrices
+don't subtract numbers that are an order of magnitude different from each other (error)
