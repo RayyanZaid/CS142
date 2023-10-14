@@ -2,3 +2,21 @@ square root bit manipulation (first programming assignment)
 
 ill-conditioned matrices
 don't subtract numbers that are an order of magnitude different from each other (error)
+
+Parallelism 
+
+Where does parallelism happen?
+
+Sharing (temporal parallelism) not gonna take about this
+programs were stack of cards before
+
+large independent datasets
+
+adding up big chunks of numbers
+divide amongst ppl (but distribution of numbers could be unequal, some ppl may finish faster)
+
+there's still serial pieces to parallelism (the cost of distributing numbers or thread ids)
+
+any extra work kills the available parallelism you have
+
+lockless methods communication patterns
