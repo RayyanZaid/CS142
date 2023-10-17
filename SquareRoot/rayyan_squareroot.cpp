@@ -30,9 +30,10 @@ double initialGuess(double x)
     exponent -= 1023; // Remove bias
 
     // 3) Divide unbiased exponent by 2 and do 2^ to get a close guess
+        // If 'x' is a perfect square, then the guess will be perfect
     exponent /= 2;
 
-    double result = pow(2, exponent);
+    double result = pow(2,exponent);
 
     return result;
 }
@@ -43,13 +44,11 @@ double squareroot(double x)
 
     double x_n = guess;
 
-    int counter = 0;
-    while (counter < 5)
-    {
-        x_n = x_n - (((x_n * x_n) - x) / (2 * x_n));
-
-        counter++;
-    }
+    // after lots of experimenting, I think 4 times is the sweet spot
+    x_n = x_n - (((x_n * x_n) - x) / (2 * x_n));
+    x_n = x_n - (((x_n * x_n) - x) / (2 * x_n));
+    x_n = x_n - (((x_n * x_n) - x) / (2 * x_n));
+    x_n = x_n - (((x_n * x_n) - x) / (2 * x_n));
 
     return x_n;
 }
@@ -81,14 +80,14 @@ int main()
         expected.push_back(::sqrt(x));
     }
 
-    //  auto start = std::chrono::high_resolution_clock::now();
+     auto start = std::chrono::high_resolution_clock::now();
 
     std::cout << squareroots(inputs, expected) << endl;
 
-    //  auto end = std::chrono::high_resolution_clock::now();
-    // std::chrono::duration<double> duration = end - start;
+     auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
 
-    // std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;
+    std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }
