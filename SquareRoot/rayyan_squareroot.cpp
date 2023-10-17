@@ -30,10 +30,10 @@ double initialGuess(double x)
     exponent -= 1023; // Remove bias
 
     // 3) Divide unbiased exponent by 2 and do 2^ to get a close guess
-        // If 'x' is a perfect square, then the guess will be perfect
+    // If 'x' is a perfect square, then the guess will be perfect
     exponent /= 2;
 
-    double result = pow(2,exponent);
+    double result = pow(2, exponent);
 
     return result;
 }
@@ -80,11 +80,11 @@ int main()
         expected.push_back(::sqrt(x));
     }
 
-     auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
 
     std::cout << squareroots(inputs, expected) << endl;
 
-     auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
 
     std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;

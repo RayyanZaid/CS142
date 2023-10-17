@@ -3,6 +3,9 @@ square root bit manipulation (first programming assignment)
 ill-conditioned matrices
 don't subtract numbers that are an order of magnitude different from each other (error)
 
+
+
+
 Parallelism 
 
 Where does parallelism happen?
@@ -20,3 +23,27 @@ there's still serial pieces to parallelism (the cost of distributing numbers or 
 any extra work kills the available parallelism you have
 
 lockless methods communication patterns
+
+
+race condition -- when 2 diff processes write to the same memory location at the same time
+
+update balance only if you know what the old balance is (from picture). atomic instruction
+
+
+PROGRAMMING ASSIGNMENT 2
+
+3 Queues (Check the speed for each)
+
+push numbers 1 -- 1,000,000
+
+2 threads filling it with numbers (until something interesting happens)
+write the interesting stuff in the comments during submission
+
+1) No control (things can disapper or double when 2 threads access it)
+
+
+2) Use Mutex to fix the problem from 1 
+Mutex - allows solitary access to a block of code (should be no surprises) (it's safe)
+Issue: Could be slow
+
+3) COMPARE AND SET: update head only if you know what the old head is (from picture). atomic instruction
