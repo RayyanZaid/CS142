@@ -1,0 +1,23 @@
+PROGRAMMING ASSIGNMENT 2
+
+3 Queues (Check the speed for each)
+
+push numbers 1 -- 1,000,000
+
+2 threads filling it with numbers (until something interesting happens)
+write the interesting stuff in the comments during submission
+
+1) No control (things can disapper or double when 2 threads access it)
+
+
+2) Use Mutex to fix the problem from 1 
+Mutex - allows solitary access to a block of code (should be no surprises) (it's safe)
+Mutexes use locks
+Issue: Could be slow
+
+3) COMPARE AND SET: update head only if you know what the old head is (from picture). atomic instruction
+    CAS (Compare and Swap)
+TIPS: 
+
+#include <atomic> -- for compare 
+#include <mutex>
