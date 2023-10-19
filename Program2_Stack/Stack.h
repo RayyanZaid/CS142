@@ -7,12 +7,14 @@ class Stack
 {
 private:
     Node *head;
+    int numElements;
 
 public:
     Stack();
     void pushFront(int number);
     void popFront();
     void printAllNodes();
+    int getNumElements();
 };
 
 #endif
