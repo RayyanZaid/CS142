@@ -13,17 +13,87 @@ First experiment
 I've never done anything with parallelism before, so I just wanted to convince myself that having 2 threads 
 is faster than 1.
 
-When I measured of 1 thread and 2 threads initially, I was surprised to see that 1 thread was actually running faster.
+When I measured 1 thread and 2 threads initially, I was surprised to see that 1 thread was actually running faster (for smaller values of n)
 
 That sparked my curiosity, so then I wanted to see the intersection point of when 2 threads becomes faster than 1 thread.
-As you can see from Version1TimingIntersection.png, it's not really an exact intersection, but 2 threads tend to become faster
-after pushing about 5000 elements
+As you can see from (Version1TimingIntersection.png), it's not really an exact intersection, but 2 threads tend to become faster
+after pushing about 5000 elements.
+
+I also noticed that sometimes 2 threads could end up taking longer than 1, even at high values of n. 
+ex. if you look at version1TimeComparison, you see that all the way at n = 60,000 there a random spike for 1 instance of the 2 threaded execution.
+
 
 ACCURACY
 
 First experiment:
 
 For me, when N < 20, 2 threads add to the stack perfectly. 
+However, N went above about 40, accuracy shot down to basically 0%.
+I went to debug and noticed that anything above 40 and the program gets messed up. Usually, the error is a LACK of elements.
 
-However, once I tried inputs around 30, it started messing things up. Usually it wouldn't add elements.
-But then, I tried 30 a couple minutes later and it was working perfectly. Why did that happen?
+
+Notes for (Version 2) MUTEX locks
+______________________
+
+1 Thread  -- Version 2
+2 Threads -- Version 2
+
+
+TIME 
+
+This was the interesting part. 
+
+Time compared to other versions:
+
+First, I expected the time for this version to be higher than Version 1 because of the locking. I expected thread 2's time to increase
+drastically, which is what happened (see version2TimeComparison.png)
+
+Time between different thread numbers:
+What I did NOT expect was the execution time for 2 threads being SLOWER than 1 thread. I tried really big inputs, but failed to 
+find a point where 1 thread got slower than 2 threads. 
+
+ACCURACY 
+
+For both 1 thread and 2 threads, accuracy was at 100% every single time. 
+
+
+Notes for (Version 3) CAS (Compare and Swap)
+______________________
+
+1 Thread  -- Version 3
+2 Threads -- Version 3
+
+TIME 
+
+
+Time compared to other versions:
+
+In terms of time, CAS performed more efficiently than MUTEXing (VERSION 2). It did however go slower than (VERSION 1).
+And as the number of elements you push gets larger, both CAS and Mutexing become significantly slower than Version 1.
+(see version3TimeComparison.png)
+
+Time between different thread numbers:
+However, in CAS, the time taken for 2 threads was faster than the time for 1 thread. 
+I did believe that it would be 2x faster, but it ended up only being 17% faster for the first n = 100,000 elements 
+However, as the input increases, the efficiency of CAS becomes more prominent (the graphs start to separate, see version3TimeComparison1.png) 
+
+ACCURACY 
+
+For both 1 thread and 2 threads, accuracy was at 100% every single time. I tried to break it like 20 times, but I didn't even 
+get it lower than 100% once.
+
+
+
+Final Remarks:
+
+This assignment taught me my first practical application of multithreading.
+I also learned to never assume things will work perfectly. Every time I executed my code, I got something pretty different than the last execution.
+
+I also did not know too much about the practical differences between using Mutex Locking and CAS in multithreading. 
+After seeing such a big difference between the efficiency of the 2 methods, I decided to do a bit of research into it.
+
+Found out that the blocking behavior of MUTEXing can introduce serious overhead costs as opposed to CAS which focuses on 
+completing a critical update immediately with either a pass or fail.
+
+There's also something called Context Switching that occurs in mutexing. When a process encounters a blocked thread,
+MUTEXing switches to a ready-to-go thread which may take some overhead time.

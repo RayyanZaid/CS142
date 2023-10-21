@@ -31,7 +31,6 @@ public:
     {
         this->head = nullptr;
         this->numElements = 0;
-        pthread_mutex_init(&mutex, nullptr);
     }
 
     Node *getHead()
@@ -45,15 +44,9 @@ public:
 
         Node *prevHead = this->head;
 
-        // Lock the mutex to ensure exclusive access to the stack
-        pthread_mutex_lock(&mutex);
-
         this->head = newHead;
         newHead->setNext(prevHead);
         numElements++;
-
-        // Unlock the mutex after modifying the stack
-        pthread_mutex_unlock(&mutex);
     }
 
     int getNumElements()
@@ -64,7 +57,6 @@ public:
 private:
     std::atomic<Node *> head;
     std::atomic<int> numElements;
-    pthread_mutex_t mutex; // Mutex for synchronization
 };
 
 // Update the argument type passed to the thread functions
@@ -94,7 +86,7 @@ void *pushOddNumbers(void *arg)
     pthread_exit(NULL);
 }
 
-void twoThreadsVersion3(int n)
+int twoThreadsVersion3(int n)
 {
     Stack stack;
 
@@ -110,6 +102,8 @@ void twoThreadsVersion3(int n)
 
     pthread_join(t1, NULL);
     pthread_join(t2, NULL);
+
+    return stack.getNumElements();
 }
 
 void pushNumbers(int n)
@@ -133,7 +127,7 @@ void timeTest()
     else
     {
 
-        for (int n = 10000; n <= 100000; n += 10000)
+        for (int n = 100000; n <= 10000000; n += 1000000)
         {
             auto start1 = chrono::high_resolution_clock::now();
             pushNumbers(n); // Push elements using one thread
@@ -153,8 +147,29 @@ void timeTest()
     dataFile.close();
 }
 
+void accuracyTest(int totalTimes)
+{
+
+    int numElementsToTest = 1000;
+    int numCorrect = 0;
+    for (int i = 0; i < totalTimes; i++)
+    {
+        int numElementsReturned = twoThreadsVersion3(numElementsToTest); // Push elements using two threads
+
+        if (numElementsReturned == numElementsToTest)
+        {
+            numCorrect++;
+        }
+    }
+
+    cout << "Accuracy: " << ((1.0 * numCorrect) / (1.0 * totalTimes)) * 100 << "%" << endl;
+}
+
 int main()
 {
     timeTest();
+
+    int numTimes = 10;
+    accuracyTest(numTimes);
     return 0;
 }
