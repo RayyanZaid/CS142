@@ -24,7 +24,7 @@ plt.legend()
 plt.grid(True)
 
 # Save the plot to a file before displaying it
-plt.savefig("version2TimeComparison.png")
+plt.savefig("version3TimeComparison.png")
 
 # Display the plot
 plt.show()
