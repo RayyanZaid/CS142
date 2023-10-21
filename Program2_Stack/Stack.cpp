@@ -1,4 +1,5 @@
 #include "Stack.h" // Include the Stack class header
+#include "Node.h"
 #include <iostream>
 using namespace std;
 
@@ -6,6 +7,11 @@ Stack::Stack()
 {
     this->head = nullptr;
     this->numElements = 0;
+}
+
+Node *Stack::getHead()
+{
+    return this->head;
 }
 
 void Stack::pushFront(int number)

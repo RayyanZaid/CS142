@@ -15,6 +15,8 @@ public:
     void popFront();
     void printAllNodes();
     int getNumElements();
+    bool compareAndSetHead(Node *old_head, Node *new_head);
+    Node *getHead();
 };
 
 #endif
