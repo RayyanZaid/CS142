@@ -120,7 +120,7 @@ void timeTest()
     }
     else
     {
-        for (int n = 100000; n <= 100000; n += 50)
+        for (int n = 10000; n <= 100000; n += 10000)
         {
 
             s = Stack();
@@ -147,7 +147,7 @@ void timeTest()
             // Append the data to the same text file
             dataFile << ", " << duration.count();
 
-            dataFile << ", " << n << endl;
+            dataFile << ", " << s.getNumElements() << endl;
         }
     }
 

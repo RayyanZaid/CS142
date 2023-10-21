@@ -1,166 +1,162 @@
 #include <iostream>
-#include <fstream>
+#include <atomic>
 #include <pthread.h>
 #include <chrono>
-#include <atomic>
-#include "Stack.h"
-#include "Stack.h" // Include the Stack class header
-#include "Node.h"
+
 using namespace std;
-using namespace std::chrono;
 
-Stack s = Stack();
-
-int N = 1000;
-
-void pushFrontWithCAS(int value, Node *currHead)
+class Node
 {
-}
+public:
+    Node(int num) : data(num), next(nullptr) {}
 
-void oneThreadVersion3(int n)
+    int getData() const { return data; }
+    Node *getNext() const { return next; }
+
+    void setNext(Node *newNode)
+    {
+        next = newNode;
+    }
+
+private:
+    int data;
+    std::atomic<Node *> next;
+};
+
+class Stack
 {
-    for (int i = 1; i <= n; i++)
+public:
+    Stack()
     {
-        pushFrontWithCAS(i, s.getHead());
-    }
-}
-
-void *threadFunction1(void *arg)
-{
-    int thread_id = *((int *)arg);
-    int n = *((int *)arg); // Extract n from the argument
-    for (int i = 1; i <= n; i += 2)
-    {
-        pushFrontWithCAS(i, s.getHead());
-    }
-    return nullptr;
-}
-
-void *threadFunction2(void *arg)
-{
-    int n = *((int *)arg); // Extract n from the argument
-    for (int i = 2; i <= n; i += 2)
-    {
-        pushFrontWithCAS(i, s.getHead());
-    }
-    return nullptr;
-}
-
-void twoThreadsVersion3(int n)
-{
-    pthread_t thread1, thread2;
-    int thread_id1 = 1;
-    int thread_id2 = 2;
-
-    if (pthread_create(&thread1, nullptr, threadFunction1, &n) != 0)
-    {
-        std::cerr << "Error creating thread 1" << std::endl;
+        this->head = nullptr;
+        this->numElements = 0;
     }
 
-    if (pthread_create(&thread2, nullptr, threadFunction2, &n) != 0)
+    Node *getHead()
     {
-        std::cerr << "Error creating thread 2" << std::endl;
+        return this->head;
     }
 
-    if (pthread_join(thread1, nullptr) != 0)
+    void pushFront(int number)
     {
-        std::cerr << "Error joining thread 1" << std::endl;
+        Node *newHead = new Node(number);
+
+        Node *prevHead = this->head;
+        this->head = newHead;
+        newHead->setNext(prevHead);
+        numElements++;
     }
 
-    if (pthread_join(thread2, nullptr) != 0)
+    void popFront()
     {
-        std::cerr << "Error joining thread 2" << std::endl;
-    }
-}
-
-// Rest of your code remains the same
-void accuracyTest()
-{
-    int numTimesTested = 100;
-
-    int numCorrect1Thread = 0;
-    int numCorrect2Threads = 0;
-
-    for (int i = 0; i < 100; i++)
-    {
-        oneThreadVersion3(N);
-
-        int length = s.getNumElements();
-
-        if (N == length)
+        Node *currHead = this->head.load();
+        if (currHead != nullptr)
         {
-            numCorrect1Thread++;
-        }
-        s = Stack();
-
-        twoThreadsVersion3(N);
-        length = s.getNumElements();
-
-        if (N == length)
-        {
-            numCorrect2Threads++;
-        }
-        s = Stack();
-    }
-
-    double oneThreadAcc = ((1.0 * numCorrect1Thread) / (1.0 * numTimesTested)) * 100.0;
-    cout << "Accuracy for 1 thread: " << oneThreadAcc << "%" << endl;
-
-    double twoThreadsAcc = ((1.0 * numCorrect2Threads) / (1.0 * numTimesTested)) * 100.0;
-    cout << "Accuracy for 2 threads: " << twoThreadsAcc << "%" << endl;
-}
-
-void timeTest()
-{
-    // Open a text file for writing the data
-    ofstream dataFile("data.txt");
-
-    if (!dataFile.is_open())
-    {
-        cout << "Error opening data file." << endl;
-    }
-    else
-    {
-        for (int n = 100; n < 10000; n += 50)
-        {
-
-            s = Stack();
-
-            auto start = high_resolution_clock::now();
-
-            oneThreadVersion3(n);
-
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<nanoseconds>(stop - start);
-
-            // Write the data to the text file
-            dataFile << duration.count();
-
-            s = Stack();
-
-            start = high_resolution_clock::now();
-
-            twoThreadsVersion3(n);
-
-            stop = high_resolution_clock::now();
-            duration = duration_cast<nanoseconds>(stop - start);
-
-            // Append the data to the same text file
-            dataFile << ", " << duration.count();
-
-            dataFile << ", " << n << endl;
+            Node *next = currHead->getNext();
+            // Use compare_exchange to update the head atomically
+            while (!this->head.compare_exchange_weak(currHead, next))
+            {
+                next = currHead->getNext();
+            }
+            delete currHead;
+            numElements--; // Decrement the number of elements when popping
         }
     }
 
-    // Close the text file
-    dataFile.close();
+    void printAllNodes()
+    {
+        Node *currNode = this->head.load();
+
+        while (currNode != nullptr)
+        {
+            int currNumber = currNode->getData();
+            cout << currNumber << endl;
+            currNode = currNode->getNext();
+        }
+
+        cout << "Done" << endl;
+    }
+
+    int getNumElements()
+    {
+        return this->numElements;
+    }
+
+private:
+    std::atomic<Node *> head;
+    std::atomic<int> numElements;
+};
+
+int numElements = 100000;
+
+void *pushEvenNumbers(void *arg)
+{
+    Stack &stack = *reinterpret_cast<Stack *>(arg);
+    for (int i = 2; i < numElements; i += 2) // Push even numbers less than 20
+    {
+        stack.pushFront(i);
+    }
+    pthread_exit(NULL);
+}
+
+void *pushOddNumbers(void *arg)
+{
+    Stack &stack = *reinterpret_cast<Stack *>(arg);
+    for (int i = 1; i < numElements; i += 2) // Push odd numbers less than 20
+    {
+        stack.pushFront(i);
+    }
+    pthread_exit(NULL);
+}
+void twoThreadsVersion3()
+{
+    Stack stack;
+
+    pthread_t t1, t2;
+
+    auto start = chrono::high_resolution_clock::now();
+
+    pthread_create(&t1, NULL, pushEvenNumbers, &stack);
+    pthread_create(&t2, NULL, pushOddNumbers, &stack);
+
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+
+    auto end = chrono::high_resolution_clock::now();
+    chrono::nanoseconds elapsed = chrono::duration_cast<chrono::nanoseconds>(end - start);
+
+    cout << "Elements in the stack:" << endl;
+    cout << "Number of elements: " << stack.getNumElements() << endl;
+    cout << "Length of the stack: " << stack.getNumElements() << endl;
+    cout << "Time taken by twoThreadsVersion3: " << elapsed.count() << " nanoseconds" << endl;
+}
+
+void pushNumbers(Stack &stack)
+{
+    for (int i = 1; i <= numElements; ++i)
+    {
+        stack.pushFront(i);
+    }
+}
+
+void oneThreadVersion3()
+{
+    Stack stack;
+    auto start = chrono::high_resolution_clock::now();
+    pushNumbers(stack);
+    auto end = chrono::high_resolution_clock::now();
+    chrono::nanoseconds elapsed = chrono::duration_cast<chrono::nanoseconds>(end - start);
+
+    cout << "Elements in the stack:" << endl;
+    cout << "Number of elements: " << stack.getNumElements() << endl;
+    cout << "Length of the stack: " << stack.getNumElements() << endl;
+    cout << "Time taken by oneThreadVersion3: " << elapsed.count() << " nanoseconds" << endl;
 }
 
 int main()
 {
-
-    accuracyTest();
-    // timeTest();
+    twoThreadsVersion3();
+    oneThreadVersion3();
 
     return 0;
 }
