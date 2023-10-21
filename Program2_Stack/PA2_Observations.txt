@@ -1,0 +1,29 @@
+
+Notes for (Version 1)
+______________________
+
+1 Thread  -- Version 1
+2 Threads -- Version 1
+
+
+TIME
+
+First experiment
+
+I've never done anything with parallelism before, so I just wanted to convince myself that having 2 threads 
+is faster than 1.
+
+When I measured of 1 thread and 2 threads initially, I was surprised to see that 1 thread was actually running faster.
+
+That sparked my curiosity, so then I wanted to see the intersection point of when 2 threads becomes faster than 1 thread.
+As you can see from Version1TimingIntersection.png, it's not really an exact intersection, but 2 threads tend to become faster
+after pushing about 5000 elements
+
+ACCURACY
+
+First experiment:
+
+For me, when N < 20, 2 threads add to the stack perfectly. 
+
+However, once I tried inputs around 30, it started messing things up. Usually it wouldn't add elements.
+But then, I tried 30 a couple minutes later and it was working perfectly. Why did that happen?
