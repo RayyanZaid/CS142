@@ -42,7 +42,7 @@ void Stack::printAllNodes()
     while (currNode != nullptr)
     {
         int currNumber = currNode->getNum();
-        cout << currNumber << endl;
+        cout << currNumber << ", ";
         currNode = currNode->getNext();
     }
 

@@ -209,7 +209,7 @@ void timeTest(int numElementsPushed)
 int main()
 {
 
-    int numElementsPushed = 10500000;
+    int numElementsPushed = 10000;
     int numTimesTestedForAccuracy = 1;
     accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
     timeTest(numElementsPushed);

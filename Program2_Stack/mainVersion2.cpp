@@ -9,7 +9,6 @@ using namespace std::chrono;
 
 Stack s = Stack();
 pthread_mutex_t myMutex; // myMutex for synchronization
-int N = 1000;
 
 void oneThreadVersion2(int n)
 {
@@ -72,31 +71,30 @@ void twoThreadsVersion2(int n)
         std::cerr << "Error joining thread 2" << std::endl;
     }
 }
-
-void accuracyTest()
+void accuracyTest(int numElementsPushed, int numTimesTested)
 {
-    int numTimesTested = 100;
 
     int numCorrect1Thread = 0;
     int numCorrect2Threads = 0;
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < numTimesTested; i++)
     {
-        oneThreadVersion2(N);
+        oneThreadVersion2(numElementsPushed);
 
         int length = s.getNumElements();
 
-        if (N == length)
+        if (numElementsPushed == length)
         {
             numCorrect1Thread++;
         }
         s = Stack();
 
-        twoThreadsVersion2(N);
+        twoThreadsVersion2(numElementsPushed);
         length = s.getNumElements();
 
-        if (N == length)
+        if (numElementsPushed == length)
         {
+
             numCorrect2Threads++;
         }
         s = Stack();
@@ -109,7 +107,7 @@ void accuracyTest()
     cout << "Accuracy for 2 threads: " << twoThreadsAcc << "%" << endl;
 }
 
-void timeTest()
+void timeTestForGraph()
 {
     // Open a text file for writing the data
     ofstream dataFile("data.txt");
@@ -120,7 +118,7 @@ void timeTest()
     }
     else
     {
-        for (int n = 10000; n <= 100000; n += 10000)
+        for (int n = 1000; n <= 1000; n += 50)
         {
 
             s = Stack();
@@ -137,17 +135,16 @@ void timeTest()
 
             s = Stack();
 
-            start = high_resolution_clock::now();
-
             twoThreadsVersion2(n);
 
             stop = high_resolution_clock::now();
             duration = duration_cast<nanoseconds>(stop - start);
 
+            // s.printAllNodes();
             // Append the data to the same text file
             dataFile << ", " << duration.count();
 
-            dataFile << ", " << s.getNumElements() << endl;
+            dataFile << ", " << n << endl;
         }
     }
 
@@ -155,18 +152,44 @@ void timeTest()
     dataFile.close();
 }
 
+void timeTest(int numElementsPushed)
+{
+
+    s = Stack();
+
+    auto start = high_resolution_clock::now();
+
+    oneThreadVersion2(numElementsPushed);
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<nanoseconds>(stop - start);
+
+    cout << "Duration for 1 threads pushing " << numElementsPushed << ": " << duration.count() << " nanoseconds" << endl;
+    // s.printAllNodes();
+    s = Stack();
+
+    start = high_resolution_clock::now();
+
+    twoThreadsVersion2(numElementsPushed);
+
+    stop = high_resolution_clock::now();
+    duration = duration_cast<nanoseconds>(stop - start);
+    cout << "Duration for 2 threads pushing " << numElementsPushed << ": " << duration.count() << " nanoseconds" << endl;
+
+    // s.printAllNodes();
+}
+
 int main()
 {
-    // Initialize the myMutex
-    if (pthread_mutex_init(&myMutex, nullptr) != 0)
-    {
-        std::cerr << "myMutex initialization failed" << std::endl;
-        return 1;
-    }
 
-    accuracyTest();
-    timeTest();
-    pthread_mutex_destroy(&myMutex);
+    pthread_mutex_init(&myMutex, nullptr);
 
+    int numElementsPushed = 10500000;
+    int numTimesTestedForAccuracy = 1;
+    s = Stack();
+    accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
+    timeTest(numElementsPushed);
+
+    // timeTestForGraph();
     return 0;
 }

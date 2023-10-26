@@ -1,6 +1,9 @@
-For Main version 1 and 2, compile with : g++ mainVersion_.cpp Stack.cpp Node.cpp
+For version 1 and 2, compile with : g++ mainVersion(1 or 2).cpp Stack.cpp Node.cpp
 
-For Main version 3, go into the version3 folder and compile JUST with g++ mainVersion3.cpp. 
+For version 3, go into the version3 folder and compile JUST with g++ mainVersion3.cpp. 
 
-If you want to see a graph of the time, run the graphScript.py and change the name of plt.savefig("version2TimeComparison.png")
+If you want to see a graph of the time:
+1) call the timeTestGraph() function and change the range as you like
+2) execute the c++ file (it should populate the textfile)
+3) Go to the graphScript.py and change the name of plt.savefig() 
 

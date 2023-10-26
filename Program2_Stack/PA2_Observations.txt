@@ -1,4 +1,35 @@
 
+This document is meant to be a sort of notepad for this programming assignment.
+
+First, I'll list some main takeaways, and then go into experimentation for each version.
+
+Main Takeaways:
+
+1) It takes a BIG number of elements until 2 threads becomes faster than 1 if you want it to be accurate. 
+For CAS, it took about 10^7 elements for 2 threads to be faster
+
+2) Initial task delegation time is what causes 1 thread to be faster.
+
+3) Mutex Locking wastes a lot of time
+
+For n = 10500000
+
+
+VERSION 1 -- NOTHING
+1 threads: 203257291 nanoseconds
+2 threads: 147669041 nanoseconds
+
+VERSION 2 -- MUTEX
+1 threads: 243746208 nanoseconds
+2 threads: 385996250 nanoseconds
+
+
+VERSION 3 -- CAS
+1 thread:  443901542 nanoseconds
+2 threads: 433174458 nanoseconds
+
+
+
 Notes for (Version 1)
 ______________________
 

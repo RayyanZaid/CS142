@@ -65,29 +65,28 @@ void twoThreadsVersion1(int n)
     }
 }
 
-void accuracyTest()
+void accuracyTest(int numElementsPushed, int numTimesTested)
 {
-    int numTimesTested = 100;
 
     int numCorrect1Thread = 0;
     int numCorrect2Threads = 0;
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < numTimesTested; i++)
     {
-        oneThreadVersion1(N);
+        oneThreadVersion1(numElementsPushed);
 
         int length = s.getNumElements();
 
-        if (N == length)
+        if (numElementsPushed == length)
         {
             numCorrect1Thread++;
         }
         s = Stack();
 
-        twoThreadsVersion1(N);
+        twoThreadsVersion1(numElementsPushed);
         length = s.getNumElements();
 
-        if (N == length)
+        if (numElementsPushed == length)
         {
             numCorrect2Threads++;
         }
@@ -101,7 +100,7 @@ void accuracyTest()
     cout << "Accuracy for 2 threads: " << twoThreadsAcc << "%" << endl;
 }
 
-void timeTest()
+void timeTestForGraph()
 {
     // Open a text file for writing the data
     ofstream dataFile("data.txt");
@@ -112,7 +111,7 @@ void timeTest()
     }
     else
     {
-        for (int n = 100; n < 10000; n += 50)
+        for (int n = 1000; n <= 1000; n += 50)
         {
 
             s = Stack();
@@ -136,6 +135,7 @@ void timeTest()
             stop = high_resolution_clock::now();
             duration = duration_cast<nanoseconds>(stop - start);
 
+            // s.printAllNodes();
             // Append the data to the same text file
             dataFile << ", " << duration.count();
 
@@ -146,10 +146,41 @@ void timeTest()
     // Close the text file
     dataFile.close();
 }
+
+void timeTest(int numElementsPushed)
+{
+
+    s = Stack();
+
+    auto start = high_resolution_clock::now();
+
+    oneThreadVersion1(numElementsPushed);
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<nanoseconds>(stop - start);
+
+    cout << "Duration for 1 threads pushing " << numElementsPushed << ": " << duration.count() << " nanoseconds" << endl;
+    // s.printAllNodes();
+    s = Stack();
+
+    start = high_resolution_clock::now();
+
+    twoThreadsVersion1(numElementsPushed);
+
+    stop = high_resolution_clock::now();
+    duration = duration_cast<nanoseconds>(stop - start);
+    cout << "Duration for 2 threads pushing " << numElementsPushed << ": " << duration.count() << " nanoseconds" << endl;
+    // s.printAllNodes();
+}
+
 int main()
 {
 
-    accuracyTest();
-    timeTest();
+    int numElementsPushed = 10500000;
+    int numTimesTestedForAccuracy = 1;
+    accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
+    timeTest(numElementsPushed);
+
+    // timeTestForGraph();
     return 0;
 }
