@@ -1,0 +1,5 @@
+My code partner is Rayyan Zaid @RayyanZ
+
+The metrics I used to review my partner's code are executibility, correctness and readibility.
+
+The code executes well without any errors, and very quickly. Rayyan utilizes C++ to write the main stack cpp file and includes a graph script in Python to display the thread time comparisons and the timing intersections in png files. Regarding correctness, Rayyan uses the the thread library and pthread. In terms of readibility, Rayyan's code is straightforward and detailed. 

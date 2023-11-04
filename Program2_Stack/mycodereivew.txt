@@ -1,0 +1,12 @@
+My code review partner was Chloe 
+I measured her code through efficiency, code structure, accuracy (test cases), and testability. 
+
+Here are my comments:  
+
+Metric: Efficiency -- Chloe's code seems very efficient. She creates 3 different classes for each of the versions and uses all of them in the main function
+Metric: Code Structure. Code has a very simple structure. There are concise print statements that print out what's happening.
+Metric: Accuracy (Edge cases) : Chloe hasn't finished her code yet (she doesn't have 2 threads). I suggest using pthred or c++'s thread library and creating 2 different threads that push to the stack.
+Metric : Testability : For testability,  when you're done you can create a for loop that loops up until N.
+
+1) For each of the versions and threads, use a timing library (like chrono) to measure the time of the for loop and see how they compare to each other (make sure you save the results somewhere)
+2) For accuracy, you can keep the number of elements constant and run it a certain amount of times and then track how many are correct.

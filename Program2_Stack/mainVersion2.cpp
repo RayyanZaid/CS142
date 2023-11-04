@@ -118,7 +118,7 @@ void timeTestForGraph()
     }
     else
     {
-        for (int n = 1000; n <= 1000; n += 50)
+        for (int n = 0; n <= 500000; n += 10000)
         {
 
             s = Stack();
@@ -184,11 +184,12 @@ int main()
 
     pthread_mutex_init(&myMutex, nullptr);
 
-    int numElementsPushed = 10500000;
-    int numTimesTestedForAccuracy = 1;
+    int numElementsPushed = 10;
+    int numTimesTestedForAccuracy = 100;
     s = Stack();
     accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
     timeTest(numElementsPushed);
+    timeTestForGraph();
 
     // timeTestForGraph();
     return 0;

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-data_file = "data.txt"
+data_file = "/Users/rayyanzaid/Desktop/CS142/Program2_Stack/version3/data3.txt"
 
 n_values = []
 time_1_thread = []
@@ -24,7 +24,7 @@ plt.legend()
 plt.grid(True)
 
 # Save the plot to a file before displaying it
-plt.savefig("version3TimeComparison1.png")
+plt.savefig("version3TimeComparisonNOO.png")
 
 # Display the plot
 plt.show()

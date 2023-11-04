@@ -152,7 +152,7 @@ void accuracyTest(int numElementsPushed, int numTimesTested)
 void timeTestForGraph()
 {
     // Open a text file for writing the data
-    ofstream dataFile("data.txt");
+    ofstream dataFile("data3.txt");
 
     if (!dataFile.is_open())
     {
@@ -160,7 +160,7 @@ void timeTestForGraph()
     }
     else
     {
-        for (int n = 1000; n <= 1000; n += 50)
+        for (int n = 10500000; n <= 105000000; n += 10000000)
         {
 
             auto start = high_resolution_clock::now();
@@ -209,10 +209,11 @@ void timeTest(int numElementsPushed)
 int main()
 {
 
-    int numElementsPushed = 10500000;
-    int numTimesTestedForAccuracy = 1;
-    accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
-    timeTest(numElementsPushed);
+    // int numElementsPushed = 10500000;
+    // int numTimesTestedForAccuracy = 1;
+    // accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
+    // timeTest(numElementsPushed);
+    timeTestForGraph();
 
     // timeTestForGraph();
     return 0;

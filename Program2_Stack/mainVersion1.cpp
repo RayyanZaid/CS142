@@ -7,7 +7,6 @@ using namespace std;
 using namespace std::chrono;
 
 Stack s = Stack();
-int N = 1000;
 
 void oneThreadVersion1(int n)
 {
@@ -20,7 +19,7 @@ void oneThreadVersion1(int n)
 void *threadFunction1(void *arg)
 {
     int thread_id = *((int *)arg);
-    int n = *((int *)arg); // Extract n from the argument
+    int n = *((int *)arg);
     for (int i = 1; i <= n; i += 2)
     {
         s.pushFront(i);
@@ -30,7 +29,7 @@ void *threadFunction1(void *arg)
 
 void *threadFunction2(void *arg)
 {
-    int n = *((int *)arg); // Extract n from the argument
+    int n = *((int *)arg);
     for (int i = 2; i <= n; i += 2)
     {
         s.pushFront(i);
@@ -98,6 +97,8 @@ void accuracyTest(int numElementsPushed, int numTimesTested)
 
     double twoThreadsAcc = ((1.0 * numCorrect2Threads) / (1.0 * numTimesTested)) * 100.0;
     cout << "Accuracy for 2 threads: " << twoThreadsAcc << "%" << endl;
+
+    s = Stack();
 }
 
 void timeTestForGraph()
@@ -111,19 +112,18 @@ void timeTestForGraph()
     }
     else
     {
-        for (int n = 1000; n <= 1000; n += 50)
+        for (int n = 0; n <= 500000; n += 10000)
         {
 
             s = Stack();
 
-            auto start = high_resolution_clock::now();
+            std::chrono::high_resolution_clock::time_point start = high_resolution_clock::now();
 
             oneThreadVersion1(n);
 
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<nanoseconds>(stop - start);
+            std::chrono::high_resolution_clock::time_point stop = high_resolution_clock::now();
+            std::chrono::nanoseconds duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
 
-            // Write the data to the text file
             dataFile << duration.count();
 
             s = Stack();
@@ -135,16 +135,15 @@ void timeTestForGraph()
             stop = high_resolution_clock::now();
             duration = duration_cast<nanoseconds>(stop - start);
 
-            // s.printAllNodes();
-            // Append the data to the same text file
             dataFile << ", " << duration.count();
 
             dataFile << ", " << n << endl;
         }
     }
 
-    // Close the text file
     dataFile.close();
+
+    s = Stack();
 }
 
 void timeTest(int numElementsPushed)
@@ -152,12 +151,12 @@ void timeTest(int numElementsPushed)
 
     s = Stack();
 
-    auto start = high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point start = high_resolution_clock::now();
 
     oneThreadVersion1(numElementsPushed);
 
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<nanoseconds>(stop - start);
+    std::chrono::high_resolution_clock::time_point stop = high_resolution_clock::now();
+    std::chrono::nanoseconds duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
 
     cout << "Duration for 1 threads pushing " << numElementsPushed << ": " << duration.count() << " nanoseconds" << endl;
     // s.printAllNodes();
@@ -171,16 +170,21 @@ void timeTest(int numElementsPushed)
     duration = duration_cast<nanoseconds>(stop - start);
     cout << "Duration for 2 threads pushing " << numElementsPushed << ": " << duration.count() << " nanoseconds" << endl;
     // s.printAllNodes();
+
+    s = Stack();
 }
 
 int main()
 {
 
-    int numElementsPushed = 10500000;
-    int numTimesTestedForAccuracy = 1;
-    accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
-    timeTest(numElementsPushed);
+    s = Stack();
 
-    // timeTestForGraph();
+    int numElementsPushed = 10500000;
+    // int numElementsPushed = 100;
+    int numTimesTestedForAccuracy = 10;
+    // accuracyTest(numElementsPushed, numTimesTestedForAccuracy);
+    // timeTest(numElementsPushed);
+
+    timeTestForGraph();
     return 0;
 }
