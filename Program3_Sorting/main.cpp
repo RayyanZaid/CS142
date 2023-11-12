@@ -4,7 +4,9 @@
 #include <vector>
 #include <ctime>
 
-constexpr int MAXELEMENT = 6;
+constexpr int MAXELEMENT = 102020200;
+
+using namespace std;
 
 int chooseMedian(std::vector<int> &values)
 {
@@ -169,7 +171,7 @@ private:
 int main()
 {
   std::srand(static_cast<unsigned>(std::time(nullptr)));
-  Distributed D(3, 2, 3);
+  Distributed D(11, 100, 150);
 
   D.print_all();
   std::cout << "Max value: " << D.max() << std::endl;
@@ -181,7 +183,11 @@ int main()
   {
     std::cout << x << ' ';
   }
+
+  cout << "Actual Median: " << sortedValues[sortedValues.size() / 2] << endl;
+  cout << "Actual Max Value: " << sortedValues[sortedValues.size() - 1] << endl;
   std::cout << std::endl;
 
   return 0;
 }
+// Actual Median : 51959901 Actual Max Value : 101899975

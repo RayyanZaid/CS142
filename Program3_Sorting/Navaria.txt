@@ -1,0 +1,9 @@
+improvements: reduce function is missing. Leader picks and reduces. 
+accuracy: pretty sure this is affected by removing the reduce you've lost out on accuracy. 
+testing: Code testing mechanisms within the code are pretty good. Max value is coming out correctly but the median is incorrect. Should look into why that is. Method for checking median does not account for having an even number of values. Introduce that condition. 
+
+Readability: The code is not very easily readable. Should add more comments to make the program more easy to understand
+Redproducability: It 
+Correctness:
+Improvements:
+
