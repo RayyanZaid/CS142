@@ -171,7 +171,7 @@ private:
 int main()
 {
   std::srand(static_cast<unsigned>(std::time(nullptr)));
-  Distributed D(11, 100, 150);
+  Distributed D(3, 10,10);
 
   D.print_all();
   std::cout << "Max value: " << D.max() << std::endl;

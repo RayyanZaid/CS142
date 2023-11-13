@@ -17,7 +17,7 @@ using namespace std;
 
 // I've set this just to keep the numbers in a reasonable range when
 // we print them out... for your run, please set it to 2 billion or so
-constexpr int MAXELEMENT = 10;
+constexpr int MAXELEMENT = 100000;
 class Process {
   vector<int> sorted_contents_;
   vector<int> largerThanK;
@@ -289,65 +289,45 @@ public:
 
 
   int median() {
+  auto* leader = pick_a_leader();
+  int globalMax = leader->broadcast(processes, Process::CHOOSE_MAX, 0, 0);
+  int globalMin = leader->broadcast(processes, Process::CHOOSE_MIN, 0, 0);
+  int size = leader->broadcast(processes, Process::FIND_SIZE, 0, 0);
+  int k = (size / 2) + (size % 2); // Adjust for odd count arrays, ensuring median is middle value for odd and even counts
 
-    
-    auto* leader = pick_a_leader();
+  int currentLowerBound = globalMin;
+  int currentUpperBound = globalMax;
+  int median = -1;
 
-    int globalMax = leader->broadcast(processes, Process::CHOOSE_MAX,0,0);
-    
-    int globalMin = leader->broadcast(processes,Process::CHOOSE_MIN,0,0);
+  while (currentLowerBound <= currentUpperBound) {
+    int midPoint = currentLowerBound + (currentUpperBound - currentLowerBound) / 2;
+    int count = leader->broadcast(processes, Process::CHOOSE_MEDIAN, currentLowerBound, midPoint);
 
-
-    // Goal: Find out the size of the the whole dataset (how many numbers are there in all processes combined)
-    int size = leader->broadcast(processes, Process::FIND_SIZE,0,0);
-
-    // this is the index we are trying to find
-    int k = size / 2;
-
-    int currentLowerBound = globalMin;
-    int currentUpperBound = globalMax;
-
-    int median;
-
-    while(true) {
-      // we need to send a broadcast to each process to search for numbers between the currLower and currUpper
-      // this should do 2 things:
-        // 1) Store all those numbers in a private vector in each Process
-        // 2) Return how many numbers are within that range from ALL processes (count)
-
-      int count = leader->broadcast(processes,Process::CHOOSE_MEDIAN,currentLowerBound,currentUpperBound);
-
-      // each of these steps gets rid of half the original data making this algorithm O(n log(n))
-
-      // if count < k, then current upperbound is BELOW median, so we need to extend the upperbound
-        // extend upperbound by doing : upperbound = upperbound + (globalMax - upperbound) / 2
-
-      if(count < k) {
-        currentUpperBound = currentUpperBound + (globalMax - currentUpperBound) / 2;
-      }
-      // if count > k, then current upperbound is ABOVE median, so we need to reduce the upperbound
-        // reduce upperbound by doing : upperbound = upperbound - (upperbound - currentLowerBound) / 2
-
-      if(count > k) {
-        currentUpperBound = currentUpperBound - (currentUpperBound - currentLowerBound) / 2;
-      }
-      // if count is EXACTLY k, then return the max value for all elements < currUpperBound
-      // this number is the median
-
-      if(count == k) {
-        // find max that's below upperbound
-        int maxBelowUpperbound = leader->broadcast(processes,Process::CHOOSE_MAX,1,currentUpperBound);
-        return maxBelowUpperbound;
-      }
-
-
+    if (count < k) {
+      currentLowerBound = midPoint + 1; // Narrow search to upper half if count is less than k
+    } else {
+      currentUpperBound = midPoint; // Narrow search to lower half otherwise
+      median = leader->broadcast(processes, Process::CHOOSE_MAX, 1, midPoint); // Update potential median
     }
 
-
-    return -1; // failed
-  
+    // If range is fully narrowed down, break from the loop as median is found
+    if (currentLowerBound == currentUpperBound) {
+      break;
+    }
   }
+  return median; // The median value
+}
 
+ std::vector<int> getSortedValues()
+  {
+    std::vector<int> all_values;
+    for (auto &p : processes)
+    {
+      p.cheat(all_values);
+    }
+    std::sort(all_values.begin(), all_values.end());
+    return all_values;
+  }
 
   vector<int> cheat() const {
     vector<int> all_values;
@@ -374,6 +354,8 @@ private:
     }
     return leader;
   }
+
+  
 };
   
 int main() {
@@ -381,7 +363,7 @@ int main() {
   // srand((unsigned) time(NULL));
   
   srand((unsigned) time(NULL));
-  Distributed D(3 /* processes */, 2,2 /* with between 10 and 15 numbers */);
+  Distributed D(3 /* processes */, 3,4 /* with between 10 and 15 numbers */);
 
   cout << endl;
   D.print_all();
@@ -404,5 +386,7 @@ int main() {
 
   cout << "Overall Median " << calculatedMedianValue << endl;
 
+  std::vector<int> sortedValues = D.getSortedValues();
+   cout << "Actual Median " << sortedValues[sortedValues.size()/2] << endl;
   return 0;
 }
