@@ -415,7 +415,7 @@ void accuracy(int numTests) {
 
     while(i <= numTests) {
         
-        i++;
+    
 
         srand((unsigned) time(NULL));
 
@@ -483,7 +483,7 @@ void accuracy(int numTests) {
             }
         }
 
-        
+            i++;
         
 
     }
