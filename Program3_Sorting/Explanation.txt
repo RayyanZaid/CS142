@@ -1,6 +1,5 @@
 Finding the Maximum
 
-This part of the algorithm is straightforward. 
 Each process finds its maximum number in constant time since the data is already sorted locally. 
 Then the leader process collects one number from each process and finds the overall maximum. 
 This takes O(M) time, where M is the number of processes, assuming the message passing and local computation are in constant time.
@@ -8,3 +7,19 @@ This takes O(M) time, where M is the number of processes, assuming the message p
 
 Finding the Median
 
+Initial Global Extremes: The leader process finds the global minimum and maximum and the total size of all elements across processes in 
+O(M) time. This helps us start our search.
+
+Binary Search: The algorithm performs a binary search to find the median. 
+In the worst case, this binary search may take  O(logV) steps, where V is the range of values (0, MAXELEMENT).
+
+Counting Elements in Range: In each step of the binary search, the leader broadcasts a median-finding command to all processes, 
+which respond with counts of elements in the given range. Each process can respond in  O(Ni) time, where N is the number of elements in the 
+ith process.
+
+Reduction of Responses: After each broadcast, the leader must reduce the results from all processes.
+In our case, we just add the count of each process.
+This takes O(M) time per binary search step.
+
+So in total: the runtime is M + SUM_OF(Ni) for each binary step.
+This ends up being O( (M+N) * log(V) )
