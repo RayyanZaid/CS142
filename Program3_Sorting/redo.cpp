@@ -20,6 +20,8 @@ using namespace std;
 constexpr int MAXELEMENT = 10;
 class Process {
   vector<int> sorted_contents_;
+  vector<int> largerThanK;
+
 public:
   // Add new commands here... Think of the process as a thing that receives
   // a broadcast command (one of these) and an argument and creates a response
@@ -30,7 +32,8 @@ public:
     VOTE_FOR_LEADER = 1,
     CHOOSE_MAX = 2,
     CHOOSE_MEDIAN = 3,
-    FIND_SIZE = 4
+    FIND_SIZE = 4,
+    CHOOSE_MIN = 5
     
   } commands;
   // Just fill with some random data... 
@@ -56,17 +59,17 @@ public:
   // 2) the command to dictate what you want the processes to do     
   // 3) an argument you can pass in
 
-  int broadcast(vector<Process>& everyone, int c, int argument) {
+  int broadcast(vector<Process>& everyone, int c, int argument, int argument2) {
     vector<int> responses;
 
     // The next line looks at the leader process and calls the command function
     // For the max function, this should push back the maximum element from each process
-    responses.push_back( command(c,argument) );
+    responses.push_back( command(c,argument,argument2) );
 
     // The for loop does the same for the rest of the processes
     for(auto& p:everyone) {
       if (&p != this) {
-        responses.push_back(p.command(c,argument));
+        responses.push_back(p.command(c,argument,argument2));
       }
     }
 
@@ -75,14 +78,23 @@ public:
 
 
   // Each process will execute this when it hears a broadcast
-  int command(int c, int argument) {
+  int command(int c, int argument, int argument2) {
 
     // for FIND_SIZE
     int size;
 
     // for CHOOSE_MAX
-    int lastElement = sorted_contents_.back();
+    int lastElement = 0;
 
+
+    // for CHOOSE_MEDIAN 
+    int lowerBound = argument;
+    int upperBound = argument2;
+    int numElementsInRange = 0;
+
+    // for CHOOSE_MIN
+    int firstElement;
+    
     switch(c) {
     case PRINT:
     
@@ -108,23 +120,55 @@ public:
 
     // Goal: return the last element of each process
     case CHOOSE_MAX:
+
+        if(argument == 0) {
+            lastElement = sorted_contents_.back();
+        }
+
+        else {
+          for(const auto& x:sorted_contents_) {
+	          if(x <= upperBound) {
+              lastElement = x;
+            }
+            else {
+              return lastElement;
+            }
+          }
+        }
         
         return lastElement;
 
 
-    // Goal 1: Print total size of the current process' list
+    // Goal: return number of elements within the range in the arguments
     case CHOOSE_MEDIAN:
 
-        cout << "Working on it" << endl;
-        
+        // cout << "Working on it" << endl;
         
 
-    
+        for(int i = 0; i < sorted_contents_.size(); i++) {
+            if (sorted_contents_[i] <= upperBound) {
+              numElementsInRange++;
+            }
+
+            else {
+              return numElementsInRange;
+            }
+        }
+
+        return numElementsInRange;
+        
+
+    // Goal: Return the size of each process
     case FIND_SIZE:
 
         size = sorted_contents_.size();
         return size;
 
+
+    case CHOOSE_MIN:
+
+      firstElement = sorted_contents_.front();
+      return firstElement;
     }
     
 
@@ -144,6 +188,10 @@ public:
     
 
     int overallMax = 0;
+    int overallMin = MAXELEMENT;
+
+
+    int numElementsInRange = 0;
 
     switch(c) {
 
@@ -165,9 +213,14 @@ public:
 
         return overallMax;
 
-
+    
     case CHOOSE_MEDIAN:
-        cout << "Reduce - Still working on it" << endl;
+        for(int i = 0; i < responsesSize; i++) {
+            int numElementsInRangeOfEachProcess = responses[i];
+            numElementsInRange += numElementsInRangeOfEachProcess;
+        }
+
+        return numElementsInRange;
 
 
 
@@ -179,6 +232,18 @@ public:
         }
 
         return totalSize;
+
+
+    case CHOOSE_MIN:
+
+      for(int i = 0; i < responsesSize; i++) {
+            int minOfEachProcess = responses[i];
+            if (minOfEachProcess < overallMin) {
+                overallMin = minOfEachProcess;
+            }
+        }
+
+      return overallMin;
 
     }
 
@@ -212,25 +277,74 @@ public:
 
   void print_all() {
     auto* leader = pick_a_leader();
-    leader->broadcast(processes, Process::PRINT,0);
+    leader->broadcast(processes, Process::PRINT,0,0);
   }
 
 
   int max() {
     auto* leader = pick_a_leader();
-    return leader->broadcast(processes, Process::CHOOSE_MAX,0);
+    return leader->broadcast(processes, Process::CHOOSE_MAX,0,0);
 
   }
 
 
   int median() {
+
+    
     auto* leader = pick_a_leader();
 
-    // Goal: Find out the size of the the whole dataset (how many numbers are there in all processes combined)
-    int size = leader->broadcast(processes, Process::FIND_SIZE,0);
+    int globalMax = leader->broadcast(processes, Process::CHOOSE_MAX,0,0);
+    
+    int globalMin = leader->broadcast(processes,Process::CHOOSE_MIN,0,0);
 
-    // Goal: Pass in the total size. Now we know we are looking for the size / 2 element 
-    return leader->broadcast(processes, Process::CHOOSE_MEDIAN,size);
+
+    // Goal: Find out the size of the the whole dataset (how many numbers are there in all processes combined)
+    int size = leader->broadcast(processes, Process::FIND_SIZE,0,0);
+
+    // this is the index we are trying to find
+    int k = size / 2;
+
+    int currentLowerBound = globalMin;
+    int currentUpperBound = globalMax;
+
+    int median;
+
+    while(true) {
+      // we need to send a broadcast to each process to search for numbers between the currLower and currUpper
+      // this should do 2 things:
+        // 1) Store all those numbers in a private vector in each Process
+        // 2) Return how many numbers are within that range from ALL processes (count)
+
+      int count = leader->broadcast(processes,Process::CHOOSE_MEDIAN,currentLowerBound,currentUpperBound);
+
+      // each of these steps gets rid of half the original data making this algorithm O(n log(n))
+
+      // if count < k, then current upperbound is BELOW median, so we need to extend the upperbound
+        // extend upperbound by doing : upperbound = upperbound + (globalMax - upperbound) / 2
+
+      if(count < k) {
+        currentUpperBound = currentUpperBound + (globalMax - currentUpperBound) / 2;
+      }
+      // if count > k, then current upperbound is ABOVE median, so we need to reduce the upperbound
+        // reduce upperbound by doing : upperbound = upperbound - (upperbound - currentLowerBound) / 2
+
+      if(count > k) {
+        currentUpperBound = currentUpperBound - (currentUpperBound - currentLowerBound) / 2;
+      }
+      // if count is EXACTLY k, then return the max value for all elements < currUpperBound
+      // this number is the median
+
+      if(count == k) {
+        // find max that's below upperbound
+        int maxBelowUpperbound = leader->broadcast(processes,Process::CHOOSE_MAX,1,currentUpperBound);
+        return maxBelowUpperbound;
+      }
+
+
+    }
+
+
+    return -1; // failed
   
   }
 
@@ -250,9 +364,9 @@ private:
     
     // everyone votes, pick the biggest vote
     Process* leader = &processes.front();
-    int maxvalue = leader->command(Process::VOTE_FOR_LEADER,processes.size());
+    int maxvalue = leader->command(Process::VOTE_FOR_LEADER,processes.size(),0);
     for(auto& p:processes) {
-      int vote = p.command(Process::VOTE_FOR_LEADER,processes.size());
+      int vote = p.command(Process::VOTE_FOR_LEADER,processes.size(),0);
       if ( vote > maxvalue) {
 	leader = &p;
 	maxvalue = vote;
