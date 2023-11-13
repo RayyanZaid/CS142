@@ -1,57 +1,10 @@
-Explanation of Functions I Created
+Finding the Maximum
 
-The main difference between getSortedValues and chooseMedian is in their purpose and efficiency:
-
-getSortedValues: (just to sort them to display at the end)
-
-Purpose: This function collects all values from the Process instances and returns them in a sorted order.
-Efficiency: It sorts all values in the collection, which takes O(n*log(n)) time complexity if you use a typical 
-sorting algorithm (like the one you used in your code). As a result, it's less efficient, especially for large datasets.
-
-chooseMedian -- quickselect:
-
-Purpose: This function efficiently finds the median of a collection of values without explicitly sorting them.
-
-Efficiency: It uses a partitioning algorithm and the quickselect approach to find the median, 
-which has an average time complexity of O(n) but can degrade to O(n^2) in the worst case. 
-However, in practice, it is often more efficient than sorting the entire array, especially for large datasets.
-
-In summary, the main difference is that chooseMedian is more efficient for finding the median as it avoids
-sorting the entire collection, while getSortedValues sorts all values and is generally less efficient for 
-finding the median, but it provides the entire sorted list.
+This part of the algorithm is straightforward. 
+Each process finds its maximum number in constant time since the data is already sorted locally. 
+Then the leader process collects one number from each process and finds the overall maximum. 
+This takes O(M) time, where M is the number of processes, assuming the message passing and local computation are in constant time.
 
 
+Finding the Median
 
-MAX FINDER
-
-max() Function:
-
-The max() function is a member of the Distributed class, which orchestrates a set of Process instances. 
-It finds the maximum value among all the values held by these Process instances.
-
-pick_a_leader() Function:
-
-The pick_a_leader() function is responsible for selecting a leader among the Process instances. 
-It selects the leader based on the highest vote for leadership.
-Voting for Leadership:
-
-Each Process instance votes for leadership using the VOTE_FOR_LEADER command. The VOTE_FOR_LEADER command generates a 
-random vote value within the range of 0 to argument - 1 (argument is the number of Process instances in the system).
-
-Selecting the Leader:
-
-The leader is chosen as the Process instance with the highest vote. It iterates through all the Process instances, 
-collects their votes, and selects the one with the highest vote value.
-
-Returning the Max Value:
-
-The leader is responsible for responding to the CHOOSE_MAX command. 
-The CHOOSE_MAX command returns the maximum value among the values held by that Process instance.
-
-
-Function Return:
-
-The max() function returns the maximum value found among all the Process instances by calling the CHOOSE_MAX command 
-on the selected leader. So, in summary, the code finds the maximum value by having each Process vote for leadership, 
-selecting the leader based on the highest vote, and then having the leader respond with the maximum value held 
-by its sorted_contents_ member.
