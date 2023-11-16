@@ -1,0 +1,8 @@
+Max Element Value: 100000, Time Taken: 0.068 seconds
+Max Element Value: 200000, Time Taken: 0.129 seconds
+Max Element Value: 400000, Time Taken: 0.252 seconds
+Max Element Value: 800000, Time Taken: 0.515 seconds
+Max Element Value: 1600000, Time Taken: 1.12 seconds
+Max Element Value: 3200000, Time Taken: 2.103 seconds
+Max Element Value: 6400000, Time Taken: 4.01 seconds
+Max Element Value: 12800000, Time Taken: 8.564 seconds

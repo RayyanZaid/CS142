@@ -23,3 +23,6 @@ This takes O(M) time per binary search step.
 
 So in total: the runtime is M + SUM_OF(Ni) for each binary step.
 This ends up being O( (M+N) * log(V) )
+
+
+I also graphed the results (varying M keeping N constant) and (varying N keeping M constant) to depict this running time.

@@ -13,7 +13,7 @@
 #include <vector>
 #include <ctime>
 #include <random>
-
+#include <fstream>
 using namespace std;
 
 // I've set this just to keep the numbers in a reasonable range when
@@ -497,9 +497,41 @@ void accuracy(int numTests) {
 
 
 
-void speed() {
+void speedWithIncreasingProcessesToFile(int maxProcesses, int numElements) {
+    srand(static_cast<unsigned>(time(nullptr)));
+    ofstream file("speed_increasing_processes.txt");
 
+    for (int numProcesses = 1; numProcesses <= maxProcesses; numProcesses*=2) {
+        Distributed D(numProcesses, numElements, numElements); // Processes with fixed number of elements
+        clock_t start = clock();
+        D.median();
+        clock_t end = clock();
+        double elapsed = double(end - start) / CLOCKS_PER_SEC;
+        file << "Number of Processes: " << numProcesses << ", Time Taken: " << elapsed << " seconds" << endl;
+    }
+
+    file.close();
 }
+
+
+void speedWithIncreasingmaxNumElementsToFile(int numProcesses, int maxStartValue, int maxEndValue) {
+    srand(static_cast<unsigned>(time(nullptr)));
+    ofstream file("speed_increasing_max_num_element.txt");
+
+    for (int maxValue = maxStartValue; maxValue <= maxEndValue; maxValue *= 2) {
+        Distributed D(numProcesses, maxValue, maxValue); // Processes with increasing max element value
+        clock_t start = clock();
+        D.median();
+        clock_t end = clock();
+        double elapsed = double(end - start) / CLOCKS_PER_SEC;
+        file << "Max Element Value: " << maxValue << ", Time Taken: " << elapsed << " seconds" << endl;
+    }
+
+    file.close();
+}
+
+
+
 int main() {
   
   int numTests = 100;
@@ -507,15 +539,21 @@ int main() {
   
   
   
+      // Parameters for increasing number of processes
+    speedWithIncreasingProcessesToFile(1000000, 200);
+
+    // Parameters for increasing max element value
+    speedWithIncreasingmaxNumElementsToFile(10, 100000, 1000000);
   
   
-  
-  
+
+
+
+
+// Uncomment to test original starter code
+
 //   Providing a seed value.  For debug, just pick a constant integer here
 //   srand((unsigned) time(NULL));
-  
-
-
 
 
 //   srand((unsigned) time(NULL));
