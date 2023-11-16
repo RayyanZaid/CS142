@@ -26,3 +26,6 @@ This ends up being O( (M+N) * log(V) )
 
 
 I also graphed the results (varying M keeping N constant) and (varying N keeping M constant) to depict this running time.
+
+
+Also attached my thinking process (PA#3_Scratch Work) as I tried to come up with a solution.
