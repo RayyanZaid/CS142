@@ -1,0 +1,7 @@
+1. Pip install matplotlib and bitarray
+
+If you want graphs: 
+Go to the graphResultsFile and run it to generate graphs for the files in the folder texts
+
+
+If you want to test individual texts, go to either the compressByWord or compressByChar files and run it with the path of the file you want.

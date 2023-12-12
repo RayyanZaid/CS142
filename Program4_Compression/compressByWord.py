@@ -154,4 +154,4 @@ def test(inputFileName):
 # put text file name to test
 
 if __name__ == "__main__":
-    test("pride.txt")
+    test("texts/pride.txt")

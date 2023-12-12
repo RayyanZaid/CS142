@@ -151,3 +151,8 @@ def test(inputFileName):
     print(f"Compression ratio is: {compressionRatio}")
 
     return originalBits, compressedBits, compressionRatio
+
+
+
+if __name__ == "__main__":
+    test("texts/pride.txt")
