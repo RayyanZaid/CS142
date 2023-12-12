@@ -138,6 +138,7 @@ def count_bits_in_text_file(file_path):
     return num_bits
 
 
+
 def test(inputFileName):
 
     compress(f'{inputFileName}')
@@ -146,8 +147,7 @@ def test(inputFileName):
     originalBits = count_bits_in_text_file(f"{inputFileName}")
     compressedBits = count_bits_in_text_file(f"{inputFileName}.bin")
 
-    print(f"Compression ratio is: {originalBits / compressedBits}")
+    compressionRatio = originalBits / compressedBits
+    print(f"Compression ratio is: {compressionRatio}")
 
-
-# put text file name to test
-test("pride.txt")
+    return originalBits, compressedBits, compressionRatio

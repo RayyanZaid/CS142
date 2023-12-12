@@ -145,8 +145,13 @@ def test(inputFileName):
     originalBits = count_bits_in_text_file(f"{inputFileName}")
     compressedBits = count_bits_in_text_file(f"{inputFileName}.bin")
 
-    print(f"Compression ratio is: {originalBits / compressedBits}")
+    compressionRatio = originalBits / compressedBits
+    print(f"Compression ratio is: {compressionRatio}")
+
+    return originalBits, compressedBits, compressionRatio
 
 
 # put text file name to test
-test("pride.txt")
+
+if __name__ == "__main__":
+    test("pride.txt")
