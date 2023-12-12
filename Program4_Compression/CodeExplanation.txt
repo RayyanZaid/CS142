@@ -1,1 +1,47 @@
+In this assignment, I wanted to test out how compressing by word vs by character worked in 1800s type texts.
+I assumed that since they are of the same time period, they will have similar vocabulary, thereby making word compression smarter.
+
+I used Huffman encoding.
+
+
+Here is an explanation of the various functionalities of my code:
+
+
 Node Class: Represents a node in the Huffman tree. Each node has a character (char), frequency of the character (freq), and links to left and right child nodes.
+
+make_frequency_dict Function: Creates a frequency dictionary for each character in the given text.
+
+make_huffman_tree Function: Builds the Huffman tree. 
+It uses a priority queue (implemented using the heapq module) to ensure that the node with the lowest frequency is always at the front. 
+It repeatedly removes two nodes with the lowest frequency, merges them, and adds them back to the queue until only one node remains, which becomes the root of the Huffman tree.
+
+make_codes Function: 
+Generates Huffman codes for each character by traversing the tree. If a character is found, its code is stored in a dictionary.
+
+huffman_encoding Function: 
+Encodes a given text using the Huffman codes. 
+It creates the frequency dictionary, builds the Huffman tree, generates codes, and then replaces each character in the text with its corresponding code.
+
+huffman_decoding Function: 
+Decodes the compressed text. 
+It uses the Huffman codes to reconstruct the original text from the binary encoded string.
+
+compress Function: 
+It reads the file and then it compresses the text using Huffman coding.
+Finally, it saves the encoded text as a binary file (.bin) and the codes as a JSON file (.codes).
+
+decompress Function: 
+Decompresses a binary file. 
+It reads the codes and the binary file, decodes the text, and saves it as a decompressed file.
+
+count_bits_in_text_file Function: 
+Counts the number of bits in a text file, assuming each character is 1 byte (8 bits). 
+(There are some slight exceptions that my code review partner pointed out such as an accent e, but those are rare enough to dismiss)
+
+test Function: 
+A function to test the compression and decompression on a specified file. 
+It compresses and decompresses the file, then compares the size of the original and compressed files to calculate the compression ratio.
+
+graphResults Function:
+This takes the output of the test functions and applies it to each texfile in the texts directory. 
+It stores the outputs in an array and then uses the array to generate bar graphs that give a visual representation of how each method compares.
