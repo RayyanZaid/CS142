@@ -1,0 +1,13 @@
+
+Tim finished doing the frequencies and tree, and now he's starting his compression and decompression.
+
+Testability: He has a parameter to adjust the size (which is the longest path in the Huffman encoding). He also had a simple system where he could print out the bytes in original and compressed files 
+and then the compression ratio. This made it easy to see that his code worked.
+
+Correctness: Tim hasn't finished code for the decompressor yet so I can't measure his correctness.
+
+Performance: Tim used the LZW encoding (also did Huffman) and I used Huffman Encoding. We compared our compression ratios (Tim's predicted compression ratio since he hasn't implemented the whole thing). 
+We both downloaded "Pride and Prejudice." Tim got a ratio of 1.93 while I got a ratio of 1.83. 
+
+Overall, Tim's code was very testable and clear, allowing us to easily compare results. 
+

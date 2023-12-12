@@ -114,6 +114,7 @@ def decompress(compressed_file_path, code_file_path):
 
     print("Decompressed file created:", decompressed_file_path)
 
+    
 
 def count_bits_in_text_file(file_path):
     try:
@@ -121,8 +122,8 @@ def count_bits_in_text_file(file_path):
         with open(file_path, 'rb') as file:
             content = file.read()
 
-        # Calculate the number of bits
-        num_bits = len(content) * 8
+        # Calculate the number of bits (I assumed that each character is 1 byte)
+        num_bits = len(content) * 8  # use OS sys.getsizeOf(content)
 
         print(f'The text file {file_path} contains {num_bits} bits.')
     except FileNotFoundError:
@@ -130,15 +131,19 @@ def count_bits_in_text_file(file_path):
     except Exception as e:
         print(f'An error occurred: {str(e)}')
 
+    return num_bits
+
 
 def test(inputFileName):
 
     compress(f'{inputFileName}')
     decompress(f'{inputFileName}.bin', f'{inputFileName}.codes')
 
-    count_bits_in_text_file(f"{inputFileName}")
-    count_bits_in_text_file(f"{inputFileName}.bin")
+    originalBits = count_bits_in_text_file(f"{inputFileName}")
+    compressedBits = count_bits_in_text_file(f"{inputFileName}.bin")
+
+    print(f"Compression ratio is: {originalBits / compressedBits}")
 
 
-# don't
-test("input.txt")
+# put text file name to test
+test("pride.txt")
