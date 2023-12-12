@@ -1,0 +1,1 @@
+Node Class: Represents a node in the Huffman tree. Each node has a character (char), frequency of the character (freq), and links to left and right child nodes.

@@ -21,10 +21,11 @@ class Node:
 
 def make_frequency_dict(text):
     frequency = {}
-    for char in text:
-        if not char in frequency:
-            frequency[char] = 0
-        frequency[char] += 1
+    words = text.split()  # Split text into words
+    for word in words:
+        if word not in frequency:
+            frequency[word] = 0
+        frequency[word] += 1
     return frequency
 
 
@@ -63,22 +64,20 @@ def huffman_encoding(text):
     codes = {}
     make_codes(root, "", codes)
 
-    encoded_text = ''.join([codes[char] for char in text])
+    words = text.split()
+    encoded_text = ' '.join([codes[word] for word in words])  # Encode words
     return encoded_text, codes
-
 
 def huffman_decoding(encoded_text, codes):
     reverse_codes = {v: k for k, v in codes.items()}
     decoded_text = ""
-    code = ""
+    current_code = ""
 
-    for bit in encoded_text:
-        code += bit
-        if code in reverse_codes:
-            decoded_text += reverse_codes[code]
-            code = ""
+    for bit in encoded_text.split():
+        if bit in reverse_codes:
+            decoded_text += reverse_codes[bit] + " "  # Decode words
 
-    return decoded_text
+    return decoded_text.strip()
 
 
 def compress(file_path):
